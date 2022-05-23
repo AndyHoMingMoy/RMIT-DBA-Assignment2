@@ -1,0 +1,35 @@
+commit 8d7e4e5a5f5f6a60062cd20ab138735e97d1452d (HEAD -> master, origin/master)
+Author: AndyHoMingMoy <s3842349@student.rmit.edu.au>
+Date:   Tue Apr 5 22:01:34 2022 +1000
+
+    Python Script added
+
+commit 783b36561db606c1d7bea28eaea55af063e744a5
+Author: AndyHoMingMoy <s3842349@student.rmit.edu.au>
+Date:   Mon Apr 4 12:11:02 2022 +1000
+
+    Added date validation
+
+commit f665df4cf72a5738dff3ef5403c7d7520e8c5d70
+Author: AndyHoMingMoy <s3842349@student.rmit.edu.au>
+Date:   Mon Mar 28 14:11:02 2022 +1100
+
+    Null strings converted to null values
+
+commit 2f099f42d8c43ea6d300adf5745642bcc5f535ad
+Author: Andy Ho Ming Moy (3842349) <79889489+AndyHoMingMoy@users.noreply.github.com>
+Date:   Tue Mar 22 16:40:44 2022 +1100
+
+    Delete .idea directory
+
+commit ac8e7f9fec53296ab6580e44882580ceeaf7595c
+Author: Andy Ho Ming Moy (3842349) <79889489+AndyHoMingMoy@users.noreply.github.com>
+Date:   Tue Mar 22 16:40:32 2022 +1100
+
+    Create .gitignore
+
+commit bb0ade9af23a6865d3d9640226ae169b7ed9a532
+Author: AndyHoMingMoy <s3842349@student.rmit.edu.au>
+Date:   Tue Mar 22 16:37:37 2022 +1100
+
+    Initial Commmit

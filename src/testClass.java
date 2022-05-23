@@ -2,6 +2,10 @@ public class testClass {
 
     public static void main(String[] args) {
 
+//        Champion champion = new Champion(5, 5, 5);
+//
+//        System.out.println(champion);
+
 //        BTree bT = new BTree(3);
 //
 //        bT.insert(9,9);
@@ -18,25 +22,31 @@ public class testClass {
 
         BTree bT = new BTree(4);
 
-        bT.insert(34, 34);
-        bT.insert(3, 3);
-        bT.insert(46, 46);
-        bT.insert(74, 74);
-        bT.insert(56, 56);
-        bT.insert(8, 8);
-        bT.insert(97, 97);
-        bT.insert(64, 64);
-        bT.insert(14, 14);
-        bT.insert(25, 25);
-        bT.insert(100, 100);
-        bT.insert(120, 120);
-        bT.insert(15, 15);
-        bT.insert(20, 20);
-        bT.insert(34, 35);
-
-        bT.recursivePrintTree(bT.root, 0);
-
-//        bT.search(89, 89);
+        bT.insert(34, "A");
+        bT.insert(3, "A");
+        bT.insert(46, "A");
+        bT.insert(74, "A");
+        bT.insert(56, "A");
+        bT.insert(8, "A");
+        bT.insert(97, "A");
+        bT.insert(64, "A");
+        bT.insert(14, "A");
+        bT.insert(25, "A");
+        bT.insert(100, "A");
+        bT.insert(120, "A");
+        bT.insert(15, "A");
+        bT.insert(20, "A");
+        bT.insert(1, "A");
+        bT.insert(35, "A");
+        bT.insert(34, "B");
+        bT.insert(34, "C");
+        bT.insert(8, "B");
+        bT.insert(8, "C");
+        bT.insert(8, "D");
+//
+//        bT.recursivePrintTree(bT.root, 0);
+//
+        bT.rangeSearch(23, 78);
 
     }
 

@@ -8,12 +8,12 @@ public class BTree {
         this.order = order;
     }
 
-    public void search(Comparable key, Object value) {
+    public void rangeSearch(Comparable keyStart, Comparable keyEnd) {
         Node cursor = root;
         boolean isLarger = true;
         while (!cursor.isLeafNode) {
             for (int i = 0; i < cursor.m; i++) {
-                if (key.compareTo(cursor.keys[i]) < 0) {
+                if (keyStart.compareTo(cursor.keys[i]) <= 0 && keyEnd.compareTo(cursor.keys[i]) >= 0) {
                     cursor = cursor.children[i];
                     isLarger = false;
                     break;
@@ -23,14 +23,19 @@ public class BTree {
                 cursor = cursor.children[cursor.m];
             }
         }
-        for (int i = 0; i < cursor.m; i++) {
-            if (key.equals(cursor.keys[i])) {
-                System.out.println("Element found");
-                return;
+        boolean resultExists = true;
+        while (resultExists) {
+            for (int i = 0; i < cursor.m; i++) {
+                if (keyStart.compareTo(cursor.keys[i]) <= 0 && keyEnd.compareTo(cursor.keys[i]) >= 0) {
+                    System.out.println("Key: " + cursor.records[i].key + " | Value: " + cursor.records[i].value);
+                }
+            }
+            if (cursor.siblingPointer != null && keyStart.compareTo(cursor.siblingPointer.keys[0]) <= 0 && keyEnd.compareTo(cursor.siblingPointer.keys[0]) >= 0) {
+                cursor = cursor.siblingPointer;
+            } else {
+                resultExists = false;
             }
         }
-        System.out.println("Element not found");
-
     }
 
     public void insert(Comparable key, Object value) {
@@ -44,11 +49,11 @@ public class BTree {
             Node cursor = root;
             Node parent = null;
             int height = -1;
-            boolean isLarger = true;
             while (!cursor.isLeafNode) {
+                boolean isLarger = true;
                 parent = cursor;
                 for (int i = 0; i < cursor.m; i++) {
-                    if (key.compareTo(cursor.keys[i]) < 0 || key.compareTo(cursor.keys[i]) == 0) {
+                    if (key.compareTo(cursor.keys[i]) <= 0) {
                         cursor = cursor.children[i];
                         isLarger = false;
                         break;
@@ -62,68 +67,37 @@ public class BTree {
 
             // If bucket is full
             if (cursor.m == order) {
-                boolean isExist = false;
-                System.out.println(cursor.keys[0]);
-                for (int i = 0; i < cursor.m; i++) {
-                    System.out.println("A");
-                    if (cursor.keys[i].equals(key)) {
-                        System.out.println("B");
-                        isExist = true;
-                        break;
-                    }
-                }
-                if (isExist == false) {
-                    // Copy old cursor to new overflow cursor (m + 1)
-                    Node tempCursor = new Node(true, order + 1, false);
-                    int i;
-                    for (i = 0; i < cursor.m; i++) {
-                        tempCursor.keys[i] = cursor.keys[i];
-                        tempCursor.children[i] = cursor.children[i];
-                        if (tempCursor.isLeafNode) {
-                            tempCursor.records[i] = cursor.records[i];
-                        }
-                        tempCursor.m++;
-                    }
-                    tempCursor.keys[i] = key;
-                    tempCursor.records[i] = new RecordPair(key, value);
+                // Copy old cursor to new overflow cursor (m + 1)
+                Node tempCursor = new Node(true, order + 1, false);
+                int i;
+                for (i = 0; i < cursor.m; i++) {
+                    tempCursor.keys[i] = cursor.keys[i];
                     tempCursor.children[i] = cursor.children[i];
+                    if (tempCursor.isLeafNode) {
+                        tempCursor.records[i] = cursor.records[i];
+                    }
                     tempCursor.m++;
-                    sortKeys(tempCursor.keys, tempCursor.m);
-                    sortChildren(tempCursor.children, tempCursor.children.length);
-                    sortPairs(tempCursor.records, tempCursor.records.length);
-
-                    // Get index of cursor from parent children list if node is not root
-                    int index;
-                    if (cursor.isLeafNode && !(cursor == root)) {
-                        for (index = 0; index < parent.m; index++) {
-                            if (cursor.equals(parent.children[index])) {
-                                break;
-                            }
-                        }
-                        parent.children[index] = tempCursor;
-                    }
-                    split(tempCursor, height, parent);
-                } else {
-                    Node overflowBlock;
-                    while (cursor.m == order) {
-                        System.out.println("A");
-                        cursor = cursor.siblingPointer;
-                    }
-                    if (!cursor.siblingPointer.isOverflowBlock) {
-                        overflowBlock = new Node(true, order, true);
-                        overflowBlock.keys[0] = key;
-                        overflowBlock.records[0] = new RecordPair(key, value);
-                        overflowBlock.m++;
-                        overflowBlock.siblingPointer = cursor.siblingPointer;
-                        cursor.siblingPointer = overflowBlock;
-                    } else {
-                        overflowBlock = cursor.siblingPointer;
-                        overflowBlock.keys[overflowBlock.m] = key;
-                        overflowBlock.records[overflowBlock.m] = new RecordPair(key, value);
-                        overflowBlock.m++;
-                    }
                 }
+                tempCursor.keys[i] = key;
+                tempCursor.records[i] = new RecordPair(key, value);
+                tempCursor.children[i] = cursor.children[i];
+                tempCursor.m++;
+                tempCursor.siblingPointer = cursor.siblingPointer;
+                sortKeys(tempCursor.keys, tempCursor.m);
+                sortChildren(tempCursor.children, tempCursor.children.length);
+                sortPairs(tempCursor.records, tempCursor.records.length);
 
+                // Get index of cursor from parent children list if node is not root
+                int index;
+                if (cursor.isLeafNode && !(cursor == root)) {
+                    for (index = 0; index < parent.m; index++) {
+                        if (cursor.equals(parent.children[index])) {
+                            break;
+                        }
+                    }
+                    parent.children[index] = tempCursor;
+                }
+                split(tempCursor, height, parent);
             } else {
                 cursor.setKey(cursor.m, key);
                 if (cursor.isLeafNode) {
@@ -226,8 +200,6 @@ public class BTree {
                 AllocateChildrenToParent(parent, childLeft, childRight, overflowNode, height);
                 return;
             }
-
-            // If parent's children contains childLess or childMore
             AllocateChildrenToParent(parent, childLeft, childRight, overflowNode, height);
 
             // Get parent of the parent node
@@ -267,20 +239,17 @@ public class BTree {
         }
 
         sortChildren(parent.children, parent.children.length);
+        sortKeys(parent.keys, parent.m);
 
         if (overflowNode.isLeafNode && height != -1) {
+
             // Update right node pointer to the next leaf node
-            int index;
-            for (index = 0; index < parent.children.length; index++) {
-                if (childRight.equals(parent.children[index])) {
-                    break;
-                }
-            }
-            if (index + 1 < parent.children.length && parent.children[index + 1] != null) {
-                childRight.siblingPointer = parent.children[index + 1];
+            if (overflowNode.siblingPointer != null) {
+                childRight.siblingPointer = overflowNode.siblingPointer;
             }
 
             // Update previous leaf node pointer to left child
+            int index;
             for (index = 0; index < parent.children.length; index++) {
                 if (childLeft.equals(parent.children[index])) {
                     break;
