@@ -10,6 +10,6 @@ public class RecordPair <Key extends Comparable<Key>, Value> {
 
     @Override
     public String toString() {
-        return "RecordPair { Key = " + key + ", Value = " + value + " }";
+        return key + ", " + value;
     }
 }

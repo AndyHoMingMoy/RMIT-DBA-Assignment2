@@ -5,25 +5,16 @@ public class Node <Key extends Comparable<Key>> {
     public RecordPair[] records;    // For Leaf Nodes
     public Node[] children;         // For Internal Nodes
     public boolean isLeafNode;      // For both Internal and Leaf Nodes
-    public boolean isOverflowBlock;
     public Node siblingPointer;     // For Leaf Nodes
 
-    public Node(boolean isLeafNode, int order, boolean isOverflowBlock) {
+    public Node(boolean isLeafNode, int order) {
         this.isLeafNode = isLeafNode;
-        this.isOverflowBlock = isOverflowBlock;
         keys = (Key[]) new Comparable[order];
         children = new Node[order + 1];
         if (isLeafNode) {
             records = new RecordPair[order];
         }
 
-    }
-
-    public void setLeafNode(boolean isLeafNode, int order) {
-        if (!isLeafNode && this.isLeafNode) {
-            records = null;
-            children = new Node[order + 1];
-        }
     }
 
     public void setKey(int index, Comparable key) {

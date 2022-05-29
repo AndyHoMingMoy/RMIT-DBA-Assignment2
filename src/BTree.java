@@ -1,3 +1,8 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+
 @SuppressWarnings("rawtypes")
 public class BTree {
 
@@ -27,7 +32,7 @@ public class BTree {
         while (resultExists) {
             for (int i = 0; i < cursor.m; i++) {
                 if (keyStart.compareTo(cursor.keys[i]) <= 0 && keyEnd.compareTo(cursor.keys[i]) >= 0) {
-                    System.out.println("Key: " + cursor.records[i].key + " | Value: " + cursor.records[i].value);
+//                    System.out.println("Key: " + cursor.records[i].key + " | Value: " + cursor.records[i].value);
                 }
             }
             if (cursor.siblingPointer != null && keyStart.compareTo(cursor.siblingPointer.keys[0]) <= 0 && keyEnd.compareTo(cursor.siblingPointer.keys[0]) >= 0) {
@@ -40,7 +45,7 @@ public class BTree {
 
     public void insert(Comparable key, Object value) {
         if (root == null) {
-            root = new Node(true, order, false);
+            root = new Node(true, order);
             root.setKey(0, key);
             root.records[0] = new RecordPair(key, value);
             root.m++;
@@ -68,7 +73,7 @@ public class BTree {
             // If bucket is full
             if (cursor.m == order) {
                 // Copy old cursor to new overflow cursor (m + 1)
-                Node tempCursor = new Node(true, order + 1, false);
+                Node tempCursor = new Node(true, order + 1);
                 int i;
                 for (i = 0; i < cursor.m; i++) {
                     tempCursor.keys[i] = cursor.keys[i];
@@ -120,8 +125,8 @@ public class BTree {
     private void split(Node overflowNode, int height, Node parent) {
 
         // Create two child nodes to split the parent node
-        Node childLeft = new Node(true, order,false);
-        Node childRight = new Node(true, order, false);
+        Node childLeft = new Node(true, order);
+        Node childRight = new Node(true, order);
 
         // Set left child sibling to right child
         childLeft.siblingPointer = childRight;
@@ -166,7 +171,7 @@ public class BTree {
 
         // If root is split
         if (height == -1) {
-            Node newRoot = new Node(false, order, false);
+            Node newRoot = new Node(false, order);
             // Set the key of the new root to the first value of the right node
             newRoot.keys[0] = childRight.keys[0];
             newRoot.m++;
@@ -179,7 +184,7 @@ public class BTree {
             }
         } else {
             if (parent.m + 1 > order) {
-                Node tempParent = new Node(false, order + 1, false);
+                Node tempParent = new Node(false, order + 1);
                 int i;
                 for (i = 0; i < parent.m; i++) {
                     tempParent.keys[i] = parent.keys[i];
@@ -314,6 +319,38 @@ public class BTree {
         }
     }
 
+    public int getHeight() {
+        int height = 1;
+        Node node = root;
+        while (!node.isLeafNode) {
+            node = node.children[0];
+            height++;
+        }
+        return height;
+    }
+
+    public HashMap<Date, Integer> getIndex() {
+        HashMap<Date, Integer> indexes = new HashMap<>();
+        Node node = root;
+        while (!node.isLeafNode) {
+            node = node.children[0];
+        }
+        // After reaching leaf nodes
+        while (node == root || node.siblingPointer != null) {
+            for (int i = 0; i < node.records.length; i++) {
+                if (node.records[i] != null) {
+                    indexes.put((Date)node.records[i].key, (Integer) node.records[i].value);
+                }
+            }
+            if (node.siblingPointer != null) {
+                node = node.siblingPointer;
+            } else {
+                return indexes;
+            }
+        }
+        return indexes;
+    }
+
     @SuppressWarnings("unused")
     public void recursivePrintTree(Node tempDown, int height) {
         if (tempDown == root) {
@@ -362,6 +399,7 @@ public class BTree {
             recursivePrintTree(tempDown, height);
         }
     }
+
 }
 
 
